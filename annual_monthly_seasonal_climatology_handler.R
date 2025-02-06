@@ -232,11 +232,7 @@ monthly_climatology <- function(monthly_array){
 
 # directories 
 train_data <- list(
-  daymet_file = "/ourdisk/hpc/southcentralcasc/auto_archive_notyet/tape_2copies/tmp/cdstore04/data/DS_proj/CPREP2/input/DAYMETv4_pr_1980-2014_CPREP2v2_5kmgridv2.nc",
-  prism_file = "/ourdisk/hpc/southcentralcasc/auto_archive_notyet/tape_2copies/tmp/cdstore04/data/DS_proj/CPREP2/input/PRISM_pr_1980-2014_CPREP2v2_5kmgridv2.nc",
-  livneh_file = "/ourdisk/hpc/southcentralcasc/auto_archive_notyet/tape_2copies/tmp/cdstore04/data/DS_proj/CPREP2/input/LIVNEHv2_pr_1980-2014_CPREP2v2_5kmgridv2.nc",
-  nclim_file = "/ourdisk/hpc/southcentralcasc/auto_archive_notyet/tape_2copies/tmp/cdstore04/data/DS_proj/CPREP2/input/nClimGrid_pr_1980-2014_CPREP2v2_5kmgridv2.nc",
-  metadata_file = "/ourdisk/hpc/southcentralcasc/auto_archive_notyet/tape_2copies/tmp/cdstore04/data/DS_proj/CPREP2/input/METDATA_pr_1980-2014_CPREP2v2_5kmgridv2.nc"
+ variable = "directory"
 )
 
 combined_df_annual <- list()
@@ -307,8 +303,4 @@ save(final_climatology, final_seasonal_climatology, final_monthly_climatology,
 
 print("Climatology calculations completed and saved!")
 
-#system("nohup Rscript ~/02042025_climatology_calculations/annual_monthly_seasonal_climatology_handler.R &")
 
-# nohup Rscript ~/02042025_climatology_calculations/annual_monthly_seasonal_climatology_handler.R > output.log 2>&1 &
-# tail -f output.log
-# 
