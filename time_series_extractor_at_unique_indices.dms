@@ -1,0 +1,55 @@
+extract_time_series <- function(row, col, file_pull, varname){
+  # grab dates & relevant time info
+  info <- infofinder(file_pull, varname)
+  filedate <- info$filedate
+  calendar <- info$calendar
+  units_time <- info$units_time
+  
+  nc_file <- nc_open(file_pull)
+  time_series <- ncvar_get(nc_file, varname, start = c(row, col, 1), count = c(1, 1, -1))
+  times <- filedate
+  times <- substr(times, 1, 10) 
+
+  nc_close(nc_file)
+  
+  df <- data.frame(
+    time = times,  
+    precip = as.vector(time_series)*86400  
+  )
+  return(df)
+}
+
+unique_final_extract_df <- NULL
+
+for (i in 1:nrow(unique_indices)){ # will just need to change duplicate indces / unique indices.
+  row <- unique_indices[i, "row"]
+  col <- unique_indices[i, "col"]
+  
+  extracted_datasets <- list()
+  
+  for (dataset in names(train_data)){
+    print(paste0("proc. dataset, row, & col:", dataset, row, col))
+    file_pull <- train_data[[dataset]]
+    extract <- extract_time_series(row, col, file_pull, "pr")
+    extract$time <- as.POSIXct(extract$time, format = "%Y-%m-%d")
+    col_name <- paste0(dataset, "_", row, "_", col)
+    colnames(extract)[2] <- col_name
+    
+    extracted_datasets[[dataset]] <- extract 
+  }
+  
+  for (dataset in names(extracted_datasets)){
+    print(paste0("extracting and merging I think"))
+    if (is.null(unique_final_extract_df)){
+      unique_final_extract_df <- extracted_datasets[[dataset]]
+    } else{
+      unique_final_extract_df <- merge(
+        unique_final_extract_df,
+        extracted_datasets[[dataset]],
+        by = "time", all = TRUE
+      )
+    }
+  }
+}
+
+print(head(unique_final_extract_df))
