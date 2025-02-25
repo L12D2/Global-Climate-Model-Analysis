@@ -132,6 +132,8 @@ for (i in 1:nrow(unique_indices)){ # will just need to change duplicate indces /
   }
 }
 
+gc()
+
 # NOTE DIFFERENT YEAR STARTS.... 
 final_extract_df <- final_extract_df[format(final_extract_df$time, "%Y") != "1980", ]
 unique_final_extract_df <- unique_final_extract_df[format(unique_final_extract_df$time, "%Y") != "1980", ]
@@ -147,6 +149,7 @@ rep_final_extract_df <- rep_final_extract_df[, !(duplicates & names(rep_final_ex
 head(rep_final_extract_df) # note the copy of the dataframe
 head(unique_final_extract_df)
 
+############################# Duplicate Indices Plotting 
 output_folder <- "~/02132025 Statistical Analysis/Duplicate Indice PDF "
 
 # get rid of 0s
@@ -204,11 +207,61 @@ for (sufx in unique_suffixes){
   print(plot)
   dev.off()
   #print(plot)
+  rm(plot, filtered_data)
+  gc()
 }
 
 duplicate_legend_labels
 
-######################################
+############################# Unique Indices Plotting 
+
+unique_output_folder <- "~/02132025 Statistical Analysis/Unique Indice PDF"
+
+# get rid of 0s
+# done above ^^^^ 
+
+# reformat the data 
+# Duplicate indices (e.g. where datasets shared outliers)
+dropped_0_long_uni <- dropped_0_uni %>%
+  pivot_longer(cols = -time, names_to = "variable", values_to = "value")  
+
+dropped_0_long_uni <- dropped_0_long_uni %>% 
+  mutate(suffix = str_extract(variable, "[0-9]+_[0-9]+$"))
+
+unique_suffixes_uni <- unique(dropped_0_long_uni$suffix)
+
+# marking lat / lon & which indices was the "outlier" 
+mark_unique_indices <- unique_indices # note that i made a copy of the unique indices variable
+
+for (sufx in unique_suffixes_uni){
+  sufx_parts <- strsplit(sufx, "_")[[1]]
+  row <- as.integer(sufx_parts[1])
+  col <- as.integer(sufx_parts[2])
+  
+  filtered_data <- dropped_0_long_uni %>% filter(suffix == sufx)
+  
+  # plot title 
+  plot_title <- paste0("Density Plot of Unique Indices",
+                       "\nLat: ", matching_indices_uni$lat, "Lon:", matching_indices_uni$lon)
+  
+  plot <- ggplot(filtered_data, aes(x = value, color = variable)) + 
+    geom_density(na.rm = TRUE) + 
+    labs(title = plot_title, 
+         x = "Precip value [mm]", y = "Density") +
+    theme_minimal() + 
+    theme(legend.position = "bottom") +
+    guides(color = guide_legend(title = "Datasets:")) 
+  
+  file_name <- paste0(unique_output_folder, "/", sufx, "_PDF.png")
+  png(file_name, width = 800, height = 600)
+  
+  print(plot)
+  dev.off()
+  #print(plot)
+  rm(plot, filtered_data)
+  gc()
+}
+
 
 
 
