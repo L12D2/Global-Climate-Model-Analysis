@@ -151,6 +151,8 @@ head(unique_final_extract_df)
 
 ############################# Duplicate Indices Plotting 
 output_folder <- "~/02132025 Statistical Analysis/Duplicate Indice PDF "
+output_folder2 <- "~/02132025 Statistical Analysis/Duplicate Indice Histogram"
+output_folder3 <- "~/02132025 Statistical Analysis/Duplicate Indice CDF"
 
 # get rid of 0s
 dropped_0_dup <- rep_final_extract_df
@@ -201,13 +203,51 @@ for (sufx in unique_suffixes){
     theme(legend.position = "bottom") +
     guides(color = guide_legend(title = "Datasets:")) 
   
+  plot2 <- ggplot(filtered_data, aes(x = value, color = variable)) + 
+    geom_histogram(binwidth = 0.75, na.rm = TRUE) + 
+    labs(title = plot_title, 
+         x = "Precip value [mm]", y = "Density") +
+    theme_minimal() + 
+    theme(legend.position = "bottom") +
+    guides(color = guide_legend(title = "Datasets:")) 
+  
+  plot3 <- ggplot(filtered_data, aes(x = value, color = variable)) + 
+    stat_ecdf(geom = "step", na.rm = TRUE) + 
+    labs(title = plot_title, 
+         x = "Precip value [mm]", y = "Density") +
+    theme_minimal() + 
+    theme(legend.position = "bottom") +
+    guides(color = guide_legend(title = "Datasets:")) 
+  
   file_name <- paste0(output_folder, "/", sufx, "_PDF.png")
+  file_name2 <- paste0(output_folder2, "/", sufx, "_HIST.png")
+  file_name3 <- paste0(output_folder3, "/", sufx, "_CDF.png")
+  
+  # save output 
+  # png
+  # print()
+  # dev . off() 
+  # required to save plot. 
+  
   png(file_name, width = 800, height = 600)
+  print(plot)
+  dev.off() 
+  
+  png(file_name2, width = 800, height = 600)
+  print(plot2)
+  dev.off()
+  
+  png(file_name3, width = 800, height = 600)
+  print(plot3)
+  dev.off()
+  
+  #print(plot)
   
   print(plot)
-  dev.off()
-  #print(plot)
-  rm(plot, filtered_data)
+  print(plot2)
+  print(plot3)
+  
+  rm(plot, plot2, plot3, filtered_data)
   gc()
 }
 
@@ -216,6 +256,8 @@ duplicate_legend_labels
 ############################# Unique Indices Plotting 
 
 unique_output_folder <- "~/02132025 Statistical Analysis/Unique Indice PDF"
+unique_output_folder2 <- "~/02132025 Statistical Analysis/Unique Indice Histogram"
+unique_output_folder3 <- "~/02132025 Statistical Analysis/Unique Indice CDF"
 
 # get rid of 0s
 # done above ^^^^ 
@@ -250,17 +292,50 @@ for (sufx in unique_suffixes_uni){
          x = "Precip value [mm]", y = "Density") +
     theme_minimal() + 
     theme(legend.position = "bottom") +
+    guides(color = guide_legend(title = "Datasets:"))
+  
+  plot2 <- ggplot(filtered_data, aes(x = value, color = variable)) + 
+    geom_histogram(binwidth = 0.75, na.rm = TRUE) + 
+    labs(title = plot_title, 
+         x = "Precip value [mm]", y = "Density") +
+    theme_minimal() + 
+    theme(legend.position = "bottom") +
     guides(color = guide_legend(title = "Datasets:")) 
   
-  file_name <- paste0(unique_output_folder, "/", sufx, "_PDF.png")
-  png(file_name, width = 800, height = 600)
+  plot3 <- ggplot(filtered_data, aes(x = value, color = variable)) + 
+    stat_ecdf(geom = "step", na.rm = TRUE) + 
+    labs(title = plot_title, 
+         x = "Precip value [mm]", y = "Density") +
+    theme_minimal() + 
+    theme(legend.position = "bottom") +
+    guides(color = guide_legend(title = "Datasets:")) 
   
+  # save output 
+  file_name <- paste0(unique_output_folder, "/", sufx, "_PDF.png")
+  file_name2 <- paste0(unique_output_folder2, "/", sufx, "_HIST.png")
+  file_name3 <- paste0(unique_output_folder3, "/", sufx, "_CDF.png")
+  
+  png(file_name, width = 800, height = 600)
   print(plot)
   dev.off()
-  #print(plot)
-  rm(plot, filtered_data)
+  
+  png(file_name2, width = 800, height = 600)
+  print(plot2)
+  dev.off()
+  
+  png(file_name3, width = 800, height = 600)
+  print(plot3)
+  dev.off()
+  
+  print(plot)
+  print(plot2)
+  print(plot3)
+  
+  rm(plot, plot2, plot3, filtered_data)
   gc()
 }
+
+
 
 
 
